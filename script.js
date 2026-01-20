@@ -615,7 +615,7 @@ function closeAdmin(){ ADMIN_OVERLAY.classList.add('hidden'); ADMIN_OVERLAY.setA
 
 AUTH_SUBMIT && AUTH_SUBMIT.addEventListener('click', ()=>{
   const code = (AUTH_INPUT.value || '').trim();
-  if (code.toUpperCase() === 'HEEM'){ state.adminUnlocked = true; saveState(); closeAuth(); flashMoney('Admin unlocked'); openAdmin(); }
+  if (code.toUpperCase() === '777'){ state.adminUnlocked = true; saveState(); closeAuth(); flashMoney('Admin unlocked'); openAdmin(); }
   else { flashMoney('Invalid code'); AUTH_INPUT.value=''; AUTH_INPUT.focus(); }
 });
 AUTH_INPUT && AUTH_INPUT.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') AUTH_SUBMIT.click(); });
