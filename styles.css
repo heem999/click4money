@@ -134,14 +134,17 @@ body{
   position:fixed;
   inset:0;
   display:flex;
-  align-items:center;
+  align-items:center; /* default: center modals vertically */
   justify-content:center;
   background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.65));
   z-index:40;
   padding:20px;
+  overflow:auto; /* allow page-level scrolling when modal taller than viewport */
 }
 .hidden{ display:none; }
 
+/* Make modal panels constrained to viewport and scroll internally if needed.
+   This prevents cut-off content on shorter screens while keeping centered on tall screens. */
 .shop-panel{
   width:100%;
   max-width:980px;
@@ -154,6 +157,21 @@ body{
   display:flex;
   flex-direction:column;
   gap:12px;
+
+  /* Prevent panel from exceeding viewport height; enable internal scrolling */
+  max-height: calc(100vh - 40px);
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* If viewport is short, align overlays to the top so user can scroll through modal easily */
+@media (max-height:760px){
+  .overlay{ align-items: flex-start; padding-top:20px; padding-bottom:20px; }
+}
+
+/* Small tweak: for very narrow/tall mobile devices reduce side padding */
+@media (max-width:420px){
+  .overlay{ padding-left:12px; padding-right:12px; }
 }
 
 .shop-header{
@@ -342,7 +360,7 @@ body{
   .shop-panel{ padding:14px; max-width:720px; margin:6px; }
 }
 
-/* small responsive tweaks for admin UI */
+/* small responsive tweaks for admin UI and short viewports */
 @media (max-width:840px){
   .admin-row{ flex-direction:column; align-items:stretch; }
   .admin-row .buy-btn, .admin-row .ghost-btn { width:100%; }
