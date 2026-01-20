@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Heem's Clicking Game</title>
+
+  <!-- favicon: diamond emoji as an inline SVG data URL so the browser tab shows a diamond (💎) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='16'%3E%F0%9F%92%8E%3C/text%3E%3C/svg%3E">
+
   <link rel="stylesheet" href="styles.css">
   <meta name="description" content="A lightweight, mobile-friendly clicking game with upgrades, badges, events and leaderboards." />
 </head>
@@ -217,8 +221,8 @@
     </div>
   </div>
 
-  <!-- floating admin button -->
-  <button id="admin-toggle-btn" class="fab" title="Admin" aria-label="Admin"></button>
+  <!-- floating admin button (labelled and slightly widened so 'ADMIN' fits) -->
+  <button id="admin-toggle-btn" class="fab" title="Admin" aria-label="Admin" style="min-width:64px;padding:0 12px;font-size:12px">ADMIN</button>
 
   <script src="script.js"></script>
 </body>
