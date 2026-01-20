@@ -269,12 +269,12 @@ body{
 /* danger btn */
 .buy-btn.danger{ background: linear-gradient(180deg,#ff9b9b,#ff6b6b); color:#201; }
 
-/* floating admin button (red) */
+/* floating admin button (red) — adjusted so it supports a short text label like "ADMIN" */
 .fab{
   position:fixed;
   right:20px;
   bottom:20px;
-  width:56px;
+  min-width:64px;          /* allow wider label */
   height:56px;
   border-radius:999px;
   border:none;
@@ -287,9 +287,15 @@ body{
   justify-content:center;
   font-weight:900;
   color:#070707;
-  font-size:13px;
+  font-size:12px;          /* slightly smaller so 'ADMIN' fits */
+  padding:0 12px;          /* horizontal breathing room for text */
+  gap:6px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .fab:hover{ transform:translateY(-3px); }
+.fab:focus{ outline:3px solid rgba(255,255,255,0.06); outline-offset:4px; }
 
 /* flash money (floating notification) */
 .flash-money{
@@ -315,4 +321,7 @@ body{
   .shop-toggle{ padding:10px; font-size:13px; }
   .buy-btn{ padding:12px 14px; font-size:16px; border-radius:12px; }
   .shop-panel{ padding:14px; max-width:720px; margin:6px; }
+
+  /* slightly reduce fab size on very small screens */
+  .fab{ min-width:56px; padding:0 8px; font-size:11px; }
 }
