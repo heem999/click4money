@@ -313,6 +313,25 @@ body{
   transition:opacity .18s ease;
 }
 
+/* Admin panel extra styles */
+.admin-section{ border-top:1px solid rgba(255,255,255,0.02); padding-top:10px; margin-top:6px; }
+.admin-section-title{ margin:0 0 6px 0; font-size:13px; color:#dfefff; font-weight:800; }
+.admin-row{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.admin-row input[type="text"], .admin-row input[type="number"], #admin-import-area {
+  padding:10px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.03);
+  background:transparent;
+  color:var(--text);
+  font-weight:700;
+  flex:1;
+  min-width:80px;
+}
+.admin-row .buy-btn, .admin-row .ghost-btn { flex: 0 0 auto; }
+
+/* Ensure textarea uses monospace for JSON */
+#admin-import-area { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:12px; }
+
 /* responsive improvements */
 @media (max-width:640px){
   .upgrades-list{ grid-template-columns: 1fr; }
@@ -321,7 +340,11 @@ body{
   .shop-toggle{ padding:10px; font-size:13px; }
   .buy-btn{ padding:12px 14px; font-size:16px; border-radius:12px; }
   .shop-panel{ padding:14px; max-width:720px; margin:6px; }
+}
 
-  /* slightly reduce fab size on very small screens */
+/* small responsive tweaks for admin UI */
+@media (max-width:840px){
+  .admin-row{ flex-direction:column; align-items:stretch; }
+  .admin-row .buy-btn, .admin-row .ghost-btn { width:100%; }
   .fab{ min-width:56px; padding:0 8px; font-size:11px; }
 }
