@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Heem's Clicking Game</title>
+  <link rel="stylesheet" href="styles.css">
+  <meta name="description" content="A lightweight, mobile-friendly clicking game with upgrades, badges, events and leaderboards." />
+</head>
+<body>
+  <main class="game" role="main" aria-labelledby="game-title">
+    <header class="header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <h1 id="game-title" class="title">Heem's Clicking Game</h1>
+        <div id="rebirth-info" class="rebirth-info" aria-live="polite">Rebirths: <span id="rebirth-count">0</span> (<span id="rebirth-mul">x1.0</span>)</div>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="open-shop" class="shop-toggle" aria-haspopup="dialog">Upgrades Shop</button>
+        <button id="open-badges" class="shop-toggle" aria-haspopup="dialog">Badges</button>
+        <button id="open-rebirth" class="shop-toggle danger" aria-haspopup="dialog">Rebirth</button>
+        <button id="open-events" class="shop-toggle" aria-haspopup="dialog" title="Events">Events</button>
+        <button id="open-leaderboard" class="shop-toggle" aria-haspopup="dialog" title="Leaderboards">Leaderboard</button>
+        <button id="open-settings" class="shop-toggle" aria-haspopup="dialog" title="Settings">⚙️</button>
+      </div>
+    </header>
+
+    <div class="panel">
+      <div class="top-row">
+        <div id="money" class="money" aria-live="polite">$0</div>
+        <div id="cps" class="cps">0 /s</div>
+      </div>
+
+      <button id="clicker" class="btn" aria-pressed="false" aria-label="Click to earn money">click me</button>
+
+      <div class="info">Tap the button (or press Space). Tip: long-press Buy buttons to purchase max on mobile, or Shift+Click on desktop.</div>
+    </div>
+  </main>
+
+  <!-- Shop modal -->
+  <div id="shop-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="shop-title">
+      <div class="shop-header">
+        <h2 id="shop-title">Upgrades Shop</h2>
+        <button id="close-shop" class="close-btn" aria-label="Close shop">✕</button>
+      </div>
+
+      <div class="shop-top" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div id="shop-balance" class="shop-balance">$0</div>
+        <div class="shop-pager">
+          <button id="prev-page" class="ghost-btn">‹ Prev</button>
+          <span id="page-indicator" style="font-weight:700;color:#cfe3ff;margin:0 8px">Page 1 / 5</span>
+          <button id="next-page" class="ghost-btn">Next ›</button>
+        </div>
+      </div>
+
+      <div id="upgrades-list" class="upgrades-list" style="margin-top:12px;">
+        <!-- upgrades inserted here -->
+      </div>
+
+      <div class="shop-footer" style="display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:12px;">
+        <div style="color:var(--muted)">Click stats: base / multiplier / rebirth</div>
+        <button id="close-shop-2" class="ghost-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Badges modal -->
+  <div id="badges-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel">
+      <div class="shop-header">
+        <h2 id="badges-title">Badges</h2>
+        <button id="close-badges" class="close-btn">✕</button>
+      </div>
+
+      <div id="badges-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:8px;">
+        <!-- badges -->
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button id="close-badges-2" class="ghost-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rebirth modal -->
+  <div id="rebirth-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel">
+      <div class="shop-header">
+        <h2 id="rebirth-title">Rebirth</h2>
+        <button id="close-rebirth" class="close-btn">✕</button>
+      </div>
+
+      <div style="padding:8px 0;">
+        <div id="rebirth-desc" style="color:var(--muted)"></div>
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+          <div style="font-weight:700">Current rebirths: <span id="rebirth-count-2">0</span></div>
+          <div style="font-weight:700">Reward: <span id="rebirth-reward">+10% per rebirth</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px;">
+        <button id="confirm-rebirth" class="buy-btn danger">Confirm Rebirth</button>
+        <button id="cancel-rebirth" class="ghost-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Events modal (new) -->
+  <div id="events-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="events-title">
+      <div class="shop-header">
+        <h2 id="events-title">Active Event</h2>
+        <button id="close-events" class="close-btn" aria-label="Close events">✕</button>
+      </div>
+
+      <div id="events-body" style="padding-top:6px;">
+        <!-- event content inserted here -->
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button id="close-events-2" class="ghost-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard modal (new) -->
+  <div id="leaderboard-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+      <div class="shop-header">
+        <h2 id="leaderboard-title">Leaderboards</h2>
+        <button id="close-leaderboard" class="close-btn" aria-label="Close leaderboards">✕</button>
+      </div>
+
+      <div style="padding-top:6px;">
+        <div style="margin-bottom:8px;">
+          <strong>Your name:</strong>
+          <input id="leader-name" type="text" placeholder="Player" style="margin-left:8px;padding:6px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)" />
+          <button id="submit-local-score" class="buy-btn" style="margin-left:8px">Submit Score</button>
+        </div>
+
+        <div style="margin-bottom:10px;color:var(--muted);">Local leaderboard (top 10 by total earned). Optionally configure a remote leaderboard URL in Settings and submit there.</div>
+
+        <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:6px;max-height:360px;overflow:auto;"></div>
+
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+        <button id="close-leaderboard-2" class="ghost-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings modal (updated) -->
+  <div id="settings-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="shop-header">
+        <h2 id="settings-title">Settings</h2>
+        <button id="close-settings" class="close-btn">✕</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;padding-top:6px;">
+        <label><input id="toggle-vibrate" type="checkbox" /> Enable vibration (mobile)</label>
+        <label><input id="toggle-sound" type="checkbox" /> Enable sound effects</label>
+        <label>Offline accrual cap (minutes): <input id="offline-cap" type="number" min="0" step="1" value="60" style="width:80px;margin-left:8px" /></label>
+        <label>Remote leaderboard endpoint (optional): <input id="remote-leaderboard-endpoint" type="text" placeholder="https://example.com/submit" style="width:100%;padding:6px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)" /></label>
+        <div style="color:var(--muted);font-size:13px">If you provide a remote endpoint that accepts JSON { name, score, when }, the game will attempt to POST there when you submit a remote score.</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button id="save-settings" class="buy-btn">Save</button>
+        <button id="close-settings-2" class="ghost-btn" style="margin-left:8px">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin auth overlay (enter code) -->
+  <div id="auth-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div class="shop-header">
+        <h2 id="auth-title">Enter Admin Code</h2>
+        <button id="close-auth" class="close-btn" aria-label="Close">✕</button>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+        <input id="auth-input" type="text" placeholder="Enter code" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-weight:700" />
+        <button id="auth-submit" class="buy-btn">Submit</button>
+      </div>
+
+      <div style="margin-top:10px;color:var(--muted);font-size:13px;">Tip: you can also press the red admin button in the bottom-right.</div>
+    </div>
+  </div>
+
+  <!-- Admin panel overlay (visible after successful code) -->
+  <div id="admin-overlay" class="overlay hidden" aria-hidden="true">
+    <div class="shop-panel" role="dialog" aria-modal="true" aria-labelledby="admin-title">
+      <div class="shop-header">
+        <h2 id="admin-title">ADMIN COMMANDS</h2>
+        <button id="close-admin" class="close-btn" aria-label="Close admin">✕</button>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+        <div style="color:var(--muted);font-size:13px;">Use carefully — changes are applied immediately and persisted.</div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input id="admin-add-input" type="number" placeholder="Amount to add (e.g. 1000)" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-weight:700" />
+          <button id="admin-add-btn" class="buy-btn">Add Money</button>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button id="admin-set-btn" class="ghost-btn">Set Money</button>
+          <input id="admin-set-input" type="number" placeholder="Set exact money value" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-weight:700" />
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button id="admin-lock-btn" class="ghost-btn">Lock Admin (forget code)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- floating admin button -->
+  <button id="admin-toggle-btn" class="fab" title="Admin" aria-label="Admin"></button>
+
+  <script src="script.js"></script>
+</body>
+</html>
