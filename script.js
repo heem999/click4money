@@ -166,7 +166,28 @@ const badges = [
   { id: 9, name: "Veteran", desc: "Perform 5 rebirths", condition: s => s.rebirths >= 5 },
   { id:10, name: "Completionist", desc: "Buy at least 1 of every upgrade", condition: s => upgrades.every(u => (s.purchased[u.id]||0) >= 1) }
 ];
+// Extra 15 badges (IDs 11..25) — paste this immediately after the existing `const badges = [ ... ];` block
+const extraBadges = [
+  { id:11, name: "Click Apprentice", desc: "500 total clicks", condition: s => (s.totalClicks||0) >= 500 },
+  { id:12, name: "Click Adept", desc: "5,000 total clicks", condition: s => (s.totalClicks||0) >= 5000 },
+  { id:13, name: "Coin Starter", desc: "Earn $5,000 total", condition: s => (s.totalEarned||0) >= 5000 },
+  { id:14, name: "Coin Hoarder", desc: "Earn $50,000 total", condition: s => (s.totalEarned||0) >= 50000 },
+  { id:15, name: "Upgrade Novice", desc: "Buy 15 upgrade levels total", condition: s => totalUpgradesBought(s) >= 15 },
 
+  { id:16, name: "Upgrade Pro", desc: "Buy 75 upgrade levels total", condition: s => totalUpgradesBought(s) >= 75 },
+  { id:17, name: "Rebirther", desc: "Perform 2 rebirths", condition: s => (s.rebirths||0) >= 2 },
+  { id:18, name: "Rebirth Veteran", desc: "Perform 10 rebirths", condition: s => (s.rebirths||0) >= 10 },
+  { id:19, name: "AutoPilot", desc: "Have 100+ upgrade levels total", condition: s => (s.purchased && Object.values(s.purchased||{}).reduce((a,b)=>a+(b||0),0)) >= 100 },
+  { id:20, name: "Badge Seeker", desc: "Earn 10 badges", condition: s => ((s.badgesEarned||[]).length) >= 10 },
+
+  { id:21, name: "Leaderboard Debut", desc: "Submit a local leaderboard score", condition: s => (s.leaderboard && s.leaderboard.length) >= 1 },
+  { id:22, name: "Event Starter", desc: "Complete 1 event", condition: s => (s.eventHistory && s.eventHistory.length) >= 1 },
+  { id:23, name: "Lucky 7777", desc: "Reach 7,777 total clicks", condition: s => (s.totalClicks||0) >= 7777 },
+  { id:24, name: "Marathon Clicker", desc: "Reach 100,000 total clicks", condition: s => (s.totalClicks||0) >= 100000 },
+  { id:25, name: "Diamond Hoarder", desc: "Earn $100,000,000 total", condition: s => (s.totalEarned||0) >= 100000000 }
+];
+
+badges.push(...extraBadges);
 // helpers
 function totalUpgradesBought(s){ return Object.values(s.purchased).reduce((a,b)=>a+(b||0),0); }
 
