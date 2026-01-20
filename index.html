@@ -201,22 +201,105 @@
         <button id="close-admin" class="close-btn" aria-label="Close admin">✕</button>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px;">
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
         <div style="color:var(--muted);font-size:13px;">Use carefully — changes are applied immediately and persisted.</div>
 
-        <div style="display:flex;gap:8px;align-items:center;">
-          <input id="admin-add-input" type="number" placeholder="Amount to add (e.g. 1000)" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-weight:700" />
-          <button id="admin-add-btn" class="buy-btn">Add Money</button>
-        </div>
+        <!-- ADMIN: Player controls -->
+        <section class="admin-section">
+          <h3 class="admin-section-title">Player</h3>
 
-        <div style="display:flex;gap:8px;align-items:center;">
-          <button id="admin-set-btn" class="ghost-btn">Set Money</button>
-          <input id="admin-set-input" type="number" placeholder="Set exact money value" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:var(--text);font-weight:700" />
-        </div>
+          <div class="admin-row">
+            <input id="admin-add-input" type="number" placeholder="Amount to add (e.g. 1000)" />
+            <button id="admin-add-btn" class="buy-btn">Add Money</button>
+          </div>
 
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button id="admin-lock-btn" class="ghost-btn">Lock Admin (forget code)</button>
-        </div>
+          <div class="admin-row">
+            <input id="admin-set-input" type="number" placeholder="Set exact money value" />
+            <button id="admin-set-btn" class="ghost-btn">Set Money</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-set-rebirths" type="number" placeholder="Set rebirths" />
+            <button id="admin-set-rebirths-btn" class="ghost-btn">Set Rebirths</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-add-badge" type="text" placeholder="Badge id (e.g. early_player)" />
+            <button id="admin-grant-badge" class="buy-btn">Grant Badge</button>
+            <button id="admin-revoke-badge" class="ghost-btn">Revoke Badge</button>
+          </div>
+        </section>
+
+        <!-- ADMIN: Economy & gameplay -->
+        <section class="admin-section">
+          <h3 class="admin-section-title">Economy / Gameplay</h3>
+
+          <div class="admin-row">
+            <input id="admin-base-click" type="number" placeholder="Base click value" />
+            <button id="admin-set-base-click" class="ghost-btn">Set Base Click</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-set-cps" type="number" placeholder="Set CPS (eg. 5)" />
+            <button id="admin-set-cps-btn" class="ghost-btn">Set CPS</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-multiplier" type="number" placeholder="Multiply money by" step="0.1" />
+            <button id="admin-multiply-btn" class="buy-btn">Apply Multiplier</button>
+          </div>
+        </section>
+
+        <!-- ADMIN: World / Events -->
+        <section class="admin-section">
+          <h3 class="admin-section-title">World / Events</h3>
+
+          <div class="admin-row">
+            <input id="admin-trigger-event" type="text" placeholder="Event id (e.g. double_clicks)" />
+            <button id="admin-run-event" class="buy-btn">Trigger Event</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-broadcast-text" type="text" placeholder="Broadcast message" />
+            <button id="admin-broadcast-btn" class="buy-btn">Broadcast</button>
+          </div>
+        </section>
+
+        <!-- ADMIN: State management -->
+        <section class="admin-section">
+          <h3 class="admin-section-title">State / Backup</h3>
+
+          <div style="display:flex;gap:8px;flex-direction:column;">
+            <div style="display:flex;gap:8px;">
+              <button id="admin-export-btn" class="buy-btn">Export State (copy)</button>
+              <button id="admin-download-state" class="ghost-btn">Download JSON</button>
+              <button id="admin-reset-btn" class="ghost-btn danger">Reset State</button>
+            </div>
+
+            <textarea id="admin-import-area" placeholder='Paste JSON here to import' style="height:96px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+              <button id="admin-import-btn" class="buy-btn">Import Replace</button>
+              <button id="admin-import-merge-btn" class="ghost-btn">Import Merge</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADMIN: Cosmetic -->
+        <section class="admin-section">
+          <h3 class="admin-section-title">Cosmetic</h3>
+
+          <div class="admin-row">
+            <input id="admin-set-title" type="text" placeholder="Set document title" />
+            <button id="admin-set-title-btn" class="ghost-btn">Set Title</button>
+          </div>
+
+          <div class="admin-row">
+            <input id="admin-set-favicon" type="text" placeholder="Favicon data URL or emoji (💎)" />
+            <button id="admin-set-favicon-btn" class="ghost-btn">Set Favicon</button>
+            <button id="admin-reset-favicon-btn" class="ghost-btn">Reset Favicon</button>
+          </div>
+        </section>
+
       </div>
     </div>
   </div>
@@ -225,5 +308,266 @@
   <button id="admin-toggle-btn" class="fab" title="Admin" aria-label="Admin" style="min-width:64px;padding:0 12px;font-size:12px">ADMIN</button>
 
   <script src="script.js"></script>
+
+  <!-- Admin wiring: placed after script.js so global functions like saveState/updateMoneyUI exist -->
+  <script>
+    (function () {
+      // helper safe-call
+      const safe = (fn) => { try { return fn(); } catch (e) { console.error('admin error', e); } };
+
+      // query helpers
+      const $ = id => document.getElementById(id);
+
+      // Player controls
+      const ADMIN_ADD_INPUT = $('admin-add-input');
+      const ADMIN_ADD_BTN = $('admin-add-btn');
+      const ADMIN_SET_INPUT = $('admin-set-input');
+      const ADMIN_SET_BTN = $('admin-set-btn');
+      const ADMIN_SET_REBIRTHS = $('admin-set-rebirths');
+      const ADMIN_SET_REBIRTHS_BTN = $('admin-set-rebirths-btn');
+      const ADMIN_ADD_BADGE = $('admin-add-badge');
+      const ADMIN_GRANT_BADGE = $('admin-grant-badge');
+      const ADMIN_REVOKE_BADGE = $('admin-revoke-badge');
+
+      // Economy
+      const ADMIN_BASE_CLICK = $('admin-base-click');
+      const ADMIN_SET_BASE_CLICK = $('admin-set-base-click');
+      const ADMIN_SET_CPS = $('admin-set-cps');
+      const ADMIN_SET_CPS_BTN = $('admin-set-cps-btn');
+      const ADMIN_MULTIPLIER = $('admin-multiplier');
+      const ADMIN_MULTIPLY_BTN = $('admin-multiply-btn');
+
+      // Events / World
+      const ADMIN_TRIGGER_EVENT = $('admin-trigger-event');
+      const ADMIN_RUN_EVENT = $('admin-run-event');
+      const ADMIN_BROADCAST_TEXT = $('admin-broadcast-text');
+      const ADMIN_BROADCAST_BTN = $('admin-broadcast-btn');
+
+      // State
+      const ADMIN_EXPORT_BTN = $('admin-export-btn');
+      const ADMIN_DOWNLOAD_STATE = $('admin-download-state');
+      const ADMIN_RESET_BTN = $('admin-reset-btn');
+      const ADMIN_IMPORT_AREA = $('admin-import-area');
+      const ADMIN_IMPORT_BTN = $('admin-import-btn');
+      const ADMIN_IMPORT_MERGE_BTN = $('admin-import-merge-btn');
+
+      // Cosmetics
+      const ADMIN_SET_TITLE = $('admin-set-title');
+      const ADMIN_SET_TITLE_BTN = $('admin-set-title-btn');
+      const ADMIN_SET_FAVICON = $('admin-set-favicon');
+      const ADMIN_SET_FAVICON_BTN = $('admin-set-favicon-btn');
+      const ADMIN_RESET_FAVICON_BTN = $('admin-reset-favicon-btn');
+
+      // utility functions
+      function callSave() { if (typeof saveState === 'function') safe(() => saveState()); }
+      function callUpdateMoneyUI() { if (typeof updateMoneyUI === 'function') safe(() => updateMoneyUI(true)); }
+      function callRenderBadges() { if (typeof renderBadges === 'function') safe(() => renderBadges()); }
+      function flash(msg) { if (typeof flashMoney === 'function') safe(() => flashMoney(msg)); else alert(msg); }
+
+      // Ensure state object exists
+      if (typeof window.state === 'undefined') window.state = window.state || {};
+
+      // Player handlers
+      ADMIN_ADD_BTN && ADMIN_ADD_BTN.addEventListener('click', ()=>{
+        const val = Number(ADMIN_ADD_INPUT.value);
+        if (!isFinite(val) || val === 0) { flash('Enter a valid number'); return; }
+        const amount = Math.floor(val);
+        state.money = (state.money || 0) + amount;
+        state.totalEarned = (state.totalEarned || 0) + Math.max(0, amount);
+        callSave(); callUpdateMoneyUI();
+        flash(`${amount} added`);
+        ADMIN_ADD_INPUT.value = '';
+      });
+
+      ADMIN_SET_BTN && ADMIN_SET_BTN.addEventListener('click', ()=>{
+        const val = Number(ADMIN_SET_INPUT.value);
+        if (!isFinite(val) || val < 0) { flash('Enter a valid non-negative number'); return; }
+        state.money = Math.floor(val);
+        callSave(); callUpdateMoneyUI();
+        flash(`Money set to ${state.money}`);
+        ADMIN_SET_INPUT.value = '';
+      });
+
+      ADMIN_SET_REBIRTHS_BTN && ADMIN_SET_REBIRTHS_BTN.addEventListener('click', ()=>{
+        const val = Number(ADMIN_SET_REBIRTHS.value);
+        if (!isFinite(val) || val < 0) { flash('Enter a valid non-negative number'); return; }
+        state.rebirths = Math.floor(val);
+        callSave(); flash(`Rebirths set to ${state.rebirths}`);
+        ADMIN_SET_REBIRTHS.value = '';
+      });
+
+      ADMIN_GRANT_BADGE && ADMIN_GRANT_BADGE.addEventListener('click', ()=>{
+        const id = (ADMIN_ADD_BADGE.value || '').trim();
+        if (!id) { flash('Enter a badge id'); return; }
+        state.badges = state.badges || [];
+        if (!state.badges.includes(id)) state.badges.push(id);
+        callSave(); callRenderBadges(); flash(`Badge "${id}" granted`);
+      });
+
+      ADMIN_REVOKE_BADGE && ADMIN_REVOKE_BADGE.addEventListener('click', ()=>{
+        const id = (ADMIN_ADD_BADGE.value || '').trim();
+        if (!id) { flash('Enter a badge id'); return; }
+        state.badges = state.badges || [];
+        state.badges = state.badges.filter(b => b !== id);
+        callSave(); callRenderBadges(); flash(`Badge "${id}" revoked`);
+      });
+
+      // Economy handlers
+      ADMIN_SET_BASE_CLICK && ADMIN_SET_BASE_CLICK.addEventListener('click', ()=>{
+        const val = Number(ADMIN_BASE_CLICK.value);
+        if (!isFinite(val)) { flash('Enter a valid number'); return; }
+        state.baseClick = val;
+        callSave(); flash(`Base click set to ${val}`);
+        ADMIN_BASE_CLICK.value = '';
+      });
+
+      ADMIN_SET_CPS_BTN && ADMIN_SET_CPS_BTN.addEventListener('click', ()=>{
+        const val = Number(ADMIN_SET_CPS.value);
+        if (!isFinite(val)) { flash('Enter a valid number'); return; }
+        state.forcedCps = val;
+        callSave(); if (typeof recalcCps === 'function') safe(() => recalcCps());
+        flash(`CPS set to ${val}`);
+        ADMIN_SET_CPS.value = '';
+      });
+
+      ADMIN_MULTIPLY_BTN && ADMIN_MULTIPLY_BTN.addEventListener('click', ()=>{
+        const val = Number(ADMIN_MULTIPLIER.value);
+        if (!isFinite(val)) { flash('Enter a valid multiplier'); return; }
+        const factor = Number(val);
+        state.money = Math.floor((state.money || 0) * factor);
+        state.totalEarned = Math.floor((state.totalEarned || 0) * factor);
+        callSave(); callUpdateMoneyUI(); flash(`Money multiplied by ${factor}`);
+        ADMIN_MULTIPLIER.value = '';
+      });
+
+      // Events / broadcast handlers
+      ADMIN_RUN_EVENT && ADMIN_RUN_EVENT.addEventListener('click', ()=>{
+        const id = (ADMIN_TRIGGER_EVENT.value || '').trim();
+        if (!id) { flash('Enter event id'); return; }
+        // Try to call a global hook if present, otherwise just flash
+        if (typeof runEvent === 'function') { safe(()=> runEvent(id)); flash(`Event "${id}" triggered`); }
+        else flash(`Event "${id}" requested (no runEvent handler)`);
+      });
+
+      ADMIN_BROADCAST_BTN && ADMIN_BROADCAST_BTN.addEventListener('click', ()=>{
+        const msg = (ADMIN_BROADCAST_TEXT.value || '').trim();
+        if (!msg) { flash('Enter message to broadcast'); return; }
+        // If a dedicated broadcast function exists, use it; otherwise use flashMoney
+        if (typeof broadcast === 'function') safe(()=> broadcast(msg));
+        flash(msg);
+        ADMIN_BROADCAST_TEXT.value = '';
+      });
+
+      // State export / import
+      ADMIN_EXPORT_BTN && ADMIN_EXPORT_BTN.addEventListener('click', ()=>{
+        const text = JSON.stringify(window.state || {}, null, 2);
+        navigator.clipboard && navigator.clipboard.writeText(text).then(()=>{
+          flash('State copied to clipboard');
+        }).catch(()=>{ // fallback: show in textarea
+          ADMIN_IMPORT_AREA.value = text;
+          flash('State placed in import box');
+        });
+      });
+
+      ADMIN_DOWNLOAD_STATE && ADMIN_DOWNLOAD_STATE.addEventListener('click', ()=>{
+        const json = JSON.stringify(window.state || {}, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'click4money-state.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        flash('Download started');
+      });
+
+      ADMIN_RESET_BTN && ADMIN_RESET_BTN.addEventListener('click', ()=>{
+        if (!confirm('Reset game state to defaults? This cannot be undone.')) return;
+        if (typeof resetState === 'function') safe(()=> resetState());
+        else {
+          // best-effort reset: clear localStorage key if known
+          try { localStorage.removeItem('click4money_state'); } catch (e) {}
+          location.reload();
+        }
+      });
+
+      ADMIN_IMPORT_BTN && ADMIN_IMPORT_BTN.addEventListener('click', ()=>{
+        const txt = (ADMIN_IMPORT_AREA.value || '').trim();
+        if (!txt) { flash('Paste JSON to import'); return; }
+        try {
+          const parsed = JSON.parse(txt);
+          // replace state
+          window.state = parsed;
+          callSave();
+          flash('State imported (replace). Reloading to apply changes.');
+          setTimeout(()=> location.reload(), 600);
+        } catch (err) { flash('Invalid JSON'); console.error(err); }
+      });
+
+      ADMIN_IMPORT_MERGE_BTN && ADMIN_IMPORT_MERGE_BTN.addEventListener('click', ()=>{
+        const txt = (ADMIN_IMPORT_AREA.value || '').trim();
+        if (!txt) { flash('Paste JSON to import'); return; }
+        try {
+          const parsed = JSON.parse(txt);
+          window.state = Object.assign(window.state || {}, parsed);
+          callSave();
+          flash('State merged. Reloading to apply changes.');
+          setTimeout(()=> location.reload(), 600);
+        } catch (err) { flash('Invalid JSON'); console.error(err); }
+      });
+
+      // Cosmetics
+      ADMIN_SET_TITLE_BTN && ADMIN_SET_TITLE_BTN.addEventListener('click', ()=>{
+        const t = (ADMIN_SET_TITLE.value || '').trim();
+        if (!t) { flash('Enter a title'); return; }
+        document.title = t;
+        flash(`Title set to "${t}"`);
+        ADMIN_SET_TITLE.value = '';
+      });
+
+      ADMIN_SET_FAVICON_BTN && ADMIN_SET_FAVICON_BTN.addEventListener('click', ()=>{
+        const s = (ADMIN_SET_FAVICON.value || '').trim();
+        if (!s) { flash('Enter emoji or data URL'); return; }
+        let href = s;
+        // if simple emoji given, create tiny svg data url
+        if (!s.startsWith('data:') && s.length <= 2) {
+          const enc = encodeURIComponent(s);
+          href = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='16'%3E${enc}%3C/text%3E%3C/svg%3E`;
+        }
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+        link.href = href;
+        flash('Favicon updated');
+        ADMIN_SET_FAVICON.value = '';
+      });
+
+      ADMIN_RESET_FAVICON_BTN && ADMIN_RESET_FAVICON_BTN.addEventListener('click', ()=>{
+        // reset to default diamond
+        const defaultHref = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext y='14' font-size='16'%3E%F0%9F%92%8E%3C/text%3E%3C/svg%3E";
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+        link.href = defaultHref;
+        flash('Favicon reset');
+      });
+
+      // Accessibility: small helper to focus the auth input when opening admin
+      const AUTH_OVERLAY = $('auth-overlay');
+      const AUTH_INPUT = $('auth-input');
+      const ADMIN_OVERLAY = $('admin-overlay');
+      const ADMIN_BTN = $('admin-toggle-btn');
+      if (ADMIN_BTN) ADMIN_BTN.addEventListener('click', ()=>{
+        // This simply toggles the existing auth/admin flow if present in script.js
+        if (typeof state !== 'undefined' && state.adminUnlocked) {
+          ADMIN_OVERLAY && ADMIN_OVERLAY.classList.remove('hidden');
+        } else {
+          AUTH_OVERLAY && AUTH_OVERLAY.classList.remove('hidden');
+          AUTH_INPUT && AUTH_INPUT.focus();
+        }
+      });
+
+    })();
+  </script>
 </body>
 </html>
